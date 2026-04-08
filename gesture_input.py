@@ -20,7 +20,7 @@ def preprocess_frame(frame):
 
 
 def get_gesture_text():
-    # 🔥 Kill any stuck camera process
+    # Kill any stuck camera process
     os.system("fuser -k /dev/video0 2>/dev/null")
 
     cap = cv2.VideoCapture(0)
@@ -30,12 +30,12 @@ def get_gesture_text():
 
     prev_letter = ""
     stable_count = 0
-    STABILITY_THRESHOLD = 3
+    STABILITY_THRESHOLD = 4
 
     COOLDOWN = 0.3
 
     last_added_letter = ""
-    ready_for_next = True   # 🔥 key improvement
+    ready_for_next = True
 
     print("Press 'q' to finish input")
 
@@ -48,19 +48,17 @@ def get_gesture_text():
 
         frame = cv2.flip(frame, 1)
 
-        # Frame size
         h, w = frame.shape[:2]
 
         # ROI box
-        x1, y1 = w//2 - 150, h//2 - 150
-        x2, y2 = w//2 + 150, h//2 + 150
+        x1, y1 = w // 2 - 150, h // 2 - 150
+        x2, y2 = w // 2 + 150, h // 2 + 150
 
         # Draw box
         cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 255, 0), 2)
         cv2.putText(frame, "Place hand inside box", (x1, y1 - 10),
                     cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 0), 2)
 
-        # Crop ROI
         center = frame[y1:y2, x1:x2]
 
         if center is None or center.size == 0:
@@ -74,28 +72,28 @@ def get_gesture_text():
 
         letter = class_mapping[top_idx]
 
-        # 🔹 Show UI info
+        # Display current prediction
         cv2.putText(frame, f"Letter: {letter}", (10, 40),
                     cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
 
         cv2.putText(frame, f"Conf: {confidence:.2f}", (10, 120),
                     cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 255, 255), 2)
 
-        # 🔹 Stability tracking
+        # Stability tracking
         if letter == prev_letter:
             stable_count += 1
         else:
             prev_letter = letter
             stable_count = 1
-            ready_for_next = True   # reset when gesture changes
+            ready_for_next = True
 
-        # 🔹 Reset if confidence drops (hand moved)
+        # Reset if confidence drops
         if confidence < 0.80:
             ready_for_next = True
 
-        # 🔹 Accept letter ONLY when stable + ready
+        # Accept only stable + confident gestures
         if (
-            confidence > 0.95 and
+            confidence > 0.98 and
             stable_count >= STABILITY_THRESHOLD and
             time.time() - last_time > COOLDOWN and
             ready_for_next
@@ -106,26 +104,25 @@ def get_gesture_text():
 
             last_time = time.time()
             stable_count = 0
-            ready_for_next = False   # block until next gesture
+            ready_for_next = False
 
-        # 🔹 Always show text
+        # Show accumulated text
         cv2.putText(frame, f"Text: {sentence}", (10, 80),
                     cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2)
 
-        # 🔹 Instructions
-        cv2.putText(frame, "q: quit | c: clear | space: space", (10, 450),
+        # Instructions
+        cv2.putText(frame,
+                    "q: quit | c: clear | space: space | ⌫: backspace",
+                    (10, 450),
                     cv2.FONT_HERSHEY_SIMPLEX, 0.6, (200, 200, 200), 2)
 
-        # Show frame
         cv2.imshow("Gesture Input", frame)
 
+        # Key handling
         key = cv2.waitKey(1)
 
         if key == ord('q'):
-            cap.release()
-            cv2.destroyAllWindows()
-            cv2.waitKey(1)
-            return sentence
+            break
 
         elif key == ord('c'):
             sentence = ""
@@ -137,6 +134,11 @@ def get_gesture_text():
             last_added_letter = ""
             ready_for_next = True
 
+        elif key == 8 or key == 127:  # Backspace
+            sentence = sentence[:-1]
+            print("Current:", sentence)
+
+    # Cleanup
     cap.release()
     cv2.destroyAllWindows()
     cv2.waitKey(1)

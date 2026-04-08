@@ -33,8 +33,8 @@ db = load_rag()
 st.title("🧠 Sign Language AI Assistant")
 st.write("Use text or gestures to ask questions")
 
-# Input synced with session
-query = st.text_input(
+# 🔥 IMPORTANT: bind input to session_state
+st.session_state.query = st.text_input(
     "⌨️ Enter your question:",
     value=st.session_state.query
 )
@@ -42,14 +42,13 @@ query = st.text_input(
 # =========================
 # GESTURE INPUT
 # =========================
-if st.button("📷 Start Gesture Input", key="gesture_btn"):
+if st.button("📷 Start Gesture Input"):
     with st.spinner("Opening camera..."):
         gesture_text = get_gesture_text()
 
     st.session_state.query = gesture_text
     st.success(f"Gesture Input: {gesture_text}")
-
-    st.rerun()  # 🔥 important
+    st.rerun()   # 🔥 VERY IMPORTANT
 
 # =========================
 # VOICE
@@ -59,9 +58,9 @@ speak = st.checkbox("🔊 Enable Voice")
 # =========================
 # ASK
 # =========================
-if st.button("Ask", key="ask_btn"):
+if st.button("🚀 Ask AI"):
 
-    query = st.session_state.query  # 🔥 always use this
+    query = st.session_state.query.strip()  # 🔥 always use this
 
     if not query:
         st.warning("Please enter a question first")
@@ -93,7 +92,6 @@ Question:
         st.subheader("🤖 Answer:")
         st.write(answer)
 
-        # Voice output
         if speak:
             engine = pyttsx3.init()
             engine.say(answer)
