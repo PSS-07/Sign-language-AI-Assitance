@@ -1,0 +1,39 @@
+Artificial Intelligence (AI) is the simulation of human intelligence in machines that are programmed to think, learn, and make decisions. AI systems can perform tasks such as problem-solving, reasoning, and understanding language.
+
+Machine Learning (ML) is a subset of Artificial Intelligence that allows systems to learn from data without being explicitly programmed. It uses algorithms to identify patterns and improve performance over time.
+
+Deep Learning is a specialized subset of Machine Learning that uses neural networks with multiple layers. It is particularly effective for image recognition, speech processing, and natural language understanding.
+
+Natural Language Processing (NLP) is a field of AI that focuses on the interaction between computers and human language. It enables machines to read, understand, and generate text.
+
+Computer Vision is a domain of AI that enables machines to interpret and understand visual information from images and videos. It is widely used in facial recognition and object detection.
+
+Reinforcement Learning is a type of Machine Learning where an agent learns by interacting with an environment and receiving rewards or penalties.
+
+Data Science is an interdisciplinary field that involves extracting knowledge and insights from data using statistical, mathematical, and computational techniques.
+
+Big Data refers to extremely large datasets that cannot be processed using traditional methods. It requires advanced tools and technologies for storage and analysis.
+
+Cloud Computing is the delivery of computing services such as servers, storage, and databases over the internet, enabling faster innovation and flexible resources.
+
+Blockchain is a decentralized and distributed digital ledger technology that records transactions securely and transparently across multiple systems.
+
+Cybersecurity is the practice of protecting systems, networks, and data from digital attacks, unauthorized access, and damage.
+
+Internet of Things (IoT) refers to a network of physical devices connected to the internet that collect and exchange data.
+
+Neural Networks are computational models inspired by the human brain. They consist of layers of interconnected nodes that process information.
+
+Supervised Learning is a type of Machine Learning where the model is trained on labeled data.
+
+Unsupervised Learning is a type of Machine Learning where the model identifies patterns in unlabeled data.
+
+Overfitting occurs when a model learns the training data too well and performs poorly on new, unseen data.
+
+Underfitting occurs when a model is too simple to capture the underlying patterns in the data.
+
+Precision is a performance metric that measures how many of the predicted positive results are actually correct.
+
+Recall is a metric that measures how many actual positive cases were correctly identified by the model.
+
+F1 Score is the harmonic mean of precision and recall, used to evaluate the accuracy of a model.
