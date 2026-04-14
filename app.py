@@ -7,10 +7,13 @@ import pyttsx3
 from gesture_input import get_gesture_text
 
 # =========================
-# SESSION STATE
+# SESSION STATE INIT
 # =========================
 if "query" not in st.session_state:
     st.session_state.query = ""
+
+if "answer" not in st.session_state:
+    st.session_state.answer = ""
 
 # =========================
 # LOAD RAG
@@ -33,11 +36,14 @@ db = load_rag()
 st.title("🧠 Sign Language AI Assistant")
 st.write("Use text or gestures to ask questions")
 
-# 🔥 IMPORTANT: bind input to session_state
-st.session_state.query = st.text_input(
+# 🔥 Proper input binding
+query_input = st.text_input(
     "⌨️ Enter your question:",
     value=st.session_state.query
 )
+
+# Sync manually (IMPORTANT)
+st.session_state.query = query_input
 
 # =========================
 # GESTURE INPUT
@@ -46,9 +52,13 @@ if st.button("📷 Start Gesture Input"):
     with st.spinner("Opening camera..."):
         gesture_text = get_gesture_text()
 
-    st.session_state.query = gesture_text
-    st.success(f"Gesture Input: {gesture_text}")
-    st.rerun()   # 🔥 VERY IMPORTANT
+    if gesture_text:
+        st.session_state.query = gesture_text
+        st.success(f"Gesture Input: {gesture_text}")
+    else:
+        st.warning("No gesture detected")
+
+    st.rerun()  # 🔥 ensures UI refresh
 
 # =========================
 # VOICE
@@ -56,11 +66,11 @@ if st.button("📷 Start Gesture Input"):
 speak = st.checkbox("🔊 Enable Voice")
 
 # =========================
-# ASK
+# ASK BUTTON
 # =========================
 if st.button("🚀 Ask AI"):
 
-    query = st.session_state.query.strip()  # 🔥 always use this
+    query = st.session_state.query.strip()
 
     if not query:
         st.warning("Please enter a question first")
@@ -89,10 +99,18 @@ Question:
 
         answer = response['message']['content']
 
-        st.subheader("🤖 Answer:")
-        st.write(answer)
+        # Save answer in session
+        st.session_state.answer = answer
 
-        if speak:
-            engine = pyttsx3.init()
-            engine.say(answer)
-            engine.runAndWait()
+# =========================
+# DISPLAY ANSWER
+# =========================
+if st.session_state.answer:
+    st.subheader("🤖 Answer:")
+    st.write(st.session_state.answer)
+
+    # Voice output
+    if speak:
+        engine = pyttsx3.init()
+        engine.say(st.session_state.answer)
+        engine.runAndWait()
